@@ -6,16 +6,16 @@ enum Log {
     FollowFollow(usize),
 }
 
-fn parse_input(N: &mut usize, Q: &mut usize, inst: &mut Vec<Log>) {
+fn parse_input(n: &mut usize, q: &mut usize, inst: &mut Vec<Log>) {
     // recieve N and Q
     let mut buf: String = String::new();
     stdin().read_line(&mut buf).expect("failed"); // recieve N
     buf = buf.trim_end().to_string();
     let iter: Vec<_> = buf.split_ascii_whitespace().collect();
-    *N = iter[0].parse().unwrap();
-    *Q = iter[1].parse().unwrap();
+    *n = iter[0].parse().unwrap();
+    *q = iter[1].parse().unwrap();
     // recieve logs
-    for _i in 0..*Q {
+    for _i in 0..*q {
         buf.clear();
         stdin().read_line(&mut buf).expect("failed");
         buf = buf.trim_end().to_string();
@@ -52,13 +52,13 @@ fn follow_back(user: usize, follow_table: &mut Vec<Vec<usize>>) {
         }
     }
 }
-fn follow_follow(user: usize, follow_table: &mut Vec<Vec<usize>>) {
-    for connector in 0..follow_table.len() {
-        if follow_table[user][connector] == 1 {
-            for target in 0..follow_table.len() {
-                if follow_table[connector][target] == 1 {
+fn follow_follow(user: usize, init_state: &Vec<Vec<usize>>, target_table: &mut Vec<Vec<usize>>) {
+    for connector in 0..init_state.len() {
+        if init_state[user][connector] == 1 {
+            for target in 0..init_state.len() {
+                if init_state[connector][target] == 1 {
                     if user != target {
-                        follow(&user, &target, follow_table);
+                        follow(&user, &target, target_table);
                     }
                 }
             }
@@ -70,7 +70,7 @@ fn replay_logs(inst: &Vec<Log>, mut table: &mut Vec<Vec<usize>>) {
         match log {
             Log::Follow(following, followed) => follow(following, followed, &mut table),
             Log::FolowBack(user) => follow_back(*user, &mut table),
-            Log::FollowFollow(user) => follow_follow(*user, &mut table),
+            Log::FollowFollow(user) => follow_follow(*user, &table.clone(), &mut table),
         }
     }
 }
@@ -89,14 +89,14 @@ fn print_table(table: &Vec<Vec<usize>>) {
 }
 
 fn main() {
-    let mut N = 0;
-    let mut Q = 0;
+    let mut n = 0;
+    let mut q = 0;
     let mut inst = vec![];
-    parse_input(&mut N, &mut Q, &mut inst);
+    parse_input(&mut n, &mut q, &mut inst);
 
     // フォロー関係テーブル
     let mut follow_table: Vec<Vec<usize>> = vec![];
-    init_table(&mut follow_table, N);
+    init_table(&mut follow_table, n);
 
     replay_logs(&inst, &mut follow_table);
 
