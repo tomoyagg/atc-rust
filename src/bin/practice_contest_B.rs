@@ -1,3 +1,5 @@
+use indexmap::IndexMap;
+use itertools::itertools;
 use std::io::{self, Write, stdin};
 
 fn parse_input(n: &mut usize, q: &mut usize) {
@@ -34,7 +36,7 @@ fn query(alphabets: &mut Vec<char>, i: usize, j: usize) -> bool {
 
 fn compare(alphabets: &mut Vec<char>, q: usize) {
 
-    // PLAN 
+    // PLAN
     // 大小関係不明未定判定を行う→計算量が大きい(課題、どうするか考え中...)
     // 不明とわかる場合、判定をquery投げる
 }
